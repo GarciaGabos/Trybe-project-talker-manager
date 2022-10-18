@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 const { 
   talkers, 
-  specificTalker, 
+  // specificTalker, 
   validateLoginEmail, 
   validateLoginPassword,
   tokenValidation,
@@ -38,12 +38,12 @@ app.get('/talker', async (_req, res) => {
 });
 
 app.get('/talker/:id', async (req, res) => {
-  const { id } = req.params;
-  const wantedTalker = await specificTalker(Number(id));
-  if (!wantedTalker) {
-    res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  const talkerz = await talkers();
+  const talkerId = await talkerz.find(({ id }) => id === Number(req.params.id));
+  if (!talkerId) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
-  res.status(HTTP_OK_STATUS).json(wantedTalker);
+  return res.status(200).json(talkerId);
 });
 
 app.post('/login', validateLoginEmail, validateLoginPassword, (req, res) => {
