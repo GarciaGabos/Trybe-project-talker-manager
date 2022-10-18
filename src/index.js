@@ -3,7 +3,19 @@ const bodyParser = require('body-parser');
 // const readline = require('readline-sync');
 const crypto = require('crypto');
 
-const { talkers, specificTalker, validateLogin } = require('./fsUtils.js');
+const { 
+  talkers, 
+  specificTalker, 
+  validateLoginEmail, 
+  validateLoginPassword,
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  talkValidation,
+  talkValidationsWatchedAt,
+  talkValidationsRate,
+  writeNewTalkerData,
+   } = require('./fsUtils.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -34,10 +46,18 @@ app.get('/talker/:id', async (req, res) => {
   res.status(HTTP_OK_STATUS).json(wantedTalker);
 });
 
-app.post('/login', validateLogin, (req, res) => {
+app.post('/login', validateLoginEmail, validateLoginPassword, (req, res) => {
   // const email = readline.question('What\'s your email?');
   // const password = readline.question('What\'s your password?');
   const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
   const token = tokenGenerator();
   res.status(HTTP_OK_STATUS).json({ token });
+});
+
+app.post('/talker', tokenValidation, nameValidation, ageValidation, talkValidation, 
+talkValidationsWatchedAt,
+  talkValidationsRate,
+  async (req, res) => {
+  const newElement = await writeNewTalkerData(req.body);
+  return res.status(201).json(newElement);
 });
