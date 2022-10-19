@@ -149,13 +149,13 @@ const validateLoginEmail = (req, res, next) => {
     async function writeNewTalkerData(newTalker) {
       try {
           const oldData = await talkers();
-    const newTalkerWithId = { id: oldData.length + 1, ...newTalker };
-    const allData = JSON.stringify([...oldData, newTalkerWithId]);
-    await fs.writeFile(path.resolve('src/talker.json'), allData);
-    return newTalkerWithId;
-} catch (error) {
+          const newTalkerWithId = { id: oldData.length + 1, ...newTalker };
+          const allData = JSON.stringify([...oldData, newTalkerWithId]);
+          await fs.writeFile(path.resolve('src/talker.json'), allData);
+          return newTalkerWithId;
+          } catch (error) {
     console.error(`Erro na escrita do arquivo: ${error}`);
-}
+      }
     }
 
 module.exports = {
