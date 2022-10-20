@@ -117,7 +117,7 @@ const validateLoginEmail = (req, res, next) => {
           { message: 'O campo "watchedAt" é obrigatório' },
         );
       }
-      if (!talk.rate) {
+      if (talk.rate === undefined) {
         return res.status(400).json(
           { message: 'O campo "rate" é obrigatório' },
         );
@@ -138,7 +138,7 @@ const validateLoginEmail = (req, res, next) => {
 
     const talkValidationsRate = (req, res, next) => {
       const { talk } = req.body;
-      if (Number(talk.rate) < 1 || Number(talk.rate > 5)) {
+      if (!Number.isInteger(talk.rate) || talk.rate < 1 || talk.rate > 5) {
         return res.status(400).json(
           { message: 'O campo "rate" deve ser um inteiro de 1 à 5' },
         );
@@ -158,6 +158,15 @@ const validateLoginEmail = (req, res, next) => {
       }
     }
 
+    const writeFile = async (content) => {
+      try {
+        const cotnentToWrite = JSON.stringify(content);
+        fs.writeFile(path.resolve('src/talker.json'), cotnentToWrite);
+      } catch (error) {
+        console.log('error: could not write the file');
+      }
+    };
+
 module.exports = {
   talkers,
   specificTalker,
@@ -170,4 +179,5 @@ module.exports = {
   talkValidationsWatchedAt,
   talkValidationsRate,
   writeNewTalkerData,
+  writeFile,
 };
