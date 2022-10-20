@@ -40,6 +40,19 @@ app.get('/talker', async (_req, res) => {
   res.status(HTTP_OK_STATUS).json(talkersList);
 });
 
+app.get('/talker/search', tokenValidation, async (req, res) => {
+  const { q } = req.query;
+  const data = await talkers();
+  const searchedData = data.filter((el) => el.name.includes(q));
+  if (q === undefined) {
+    return res.status(200).json(data);
+} 
+  if (!searchedData) {
+    return res.status(200).json([]);
+}
+    res.status(200).json(searchedData);
+});
+
 app.get('/talker/:id', async (req, res) => {
   const talkerz = await talkers();
   const talkerId = await talkerz.find(({ id }) => id === Number(req.params.id));
@@ -93,17 +106,4 @@ app.delete('/talker/:id', tokenValidation, async (req, res) => {
   const deleteData = JSON.stringify(editedData);
   await fs.writeFile(path.resolve('src/talker.json'), deleteData);
   return res.status(204).end();
-});
-
-app.get('/talker/search', tokenValidation, async (req, res) => {
-  const { q } = req.query;
-  const data = await talkers();
-  const searchedData = data.filter((el) => el.name.includes(q));
-  if (q === undefined) {
-    return res.status(200).json(data);
-} 
-  if (!searchedData) {
-    return res.status(200).json([]);
-}
-    res.status(200).json(searchedData);
 });
